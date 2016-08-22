@@ -179,7 +179,7 @@ $domain.$group.$name.$metric.$point
 --------------------------------------------------
 
 $domain,$group,$name::
-the same as for xref:config-datapoint[конфигурации точек измерения]
+the same as for xref:config-datapoint[Measurement points configuration]
 
 $point:: the same as for
 _eshaman.entry.$domain.$group.$name.$metric.points_.
@@ -230,7 +230,7 @@ domain       = $domain
 group        = $group
 name         = $name
 file_system  = $point
-value        = значение
+value        = value
 --------------------------------------------------
 
 For other metrics:
@@ -241,7 +241,7 @@ _type  = $metric
 domain = $domain
 group  = $group
 name   = $name
-$point = значение
+$point = value
 --------------------------------------------------
 
 === Node configuration
@@ -251,11 +251,11 @@ $point = значение
 # master or worker
 eshaman.distribution.is_master = on|off
 # the list of workers, for masters only
-eshaman.distribution.nodes = "w1@91.218.212.48,w2@47.211.134.25"
+eshaman.distribution.nodes = "w1@ip.ad.re.ss,w2@ip.ad.re.ss"
 # node name name@ip.ad.dr.ess
 nodename = eshaman@127.0.0.1
 #  cookie must be the same on all of the nodes
-distributed_cookie = ASZCFGFG34
+distributed_cookie = ASDF
 
 # must be enabled on master node if is enabled on worker node
 eshaman.export.elastic.enabled = on|off
