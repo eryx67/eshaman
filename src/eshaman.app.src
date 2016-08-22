@@ -1,0 +1,41 @@
+{application, eshaman,
+ [
+  {description, "System monitoring"},
+  {vsn, "1.0.0"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib,
+                  crypto,
+                  asn1,
+                  public_key,
+                  ssl,
+                  compiler,
+                  syntax_tools,
+                  goldrush,
+                  lager,
+                  lhttpc,
+                  os_mon,
+                  erlware_commons,
+                  gproc,
+                  exometer,
+                  gen_smtp,
+                  escalus,
+                  erlastic_search,
+                  gsms,
+                  devino_sms
+                 ]},
+  {modules, [eshaman_http_uri,eshaman_sms,eshaman_ping,eshaman_xmpp,eshaman_cpu,eshaman_mail,eshaman_sup,eshaman_node_adm,eshaman_disk,eshaman_icmp,eshaman_http,eshaman_util,eshaman_elastic_report,eshaman_mem,eshaman_proxy_report,eshaman_alarm,eshaman_alarm_report,eshaman_types,eshaman_alarm_action,eshaman_app,eshaman_env,eshaman_recs]},
+  {mod, { eshaman_app, []}},
+  {env,
+   [{exometer_defaults,
+     [{['_'], ping, [{module, eshaman_ping},
+                     {options, [{module, eshaman_icmp}]}]}
+     , {['_'], http_ping, [{module, eshaman_ping},
+                           {options, [{module, eshaman_http}]}]}
+     , {['_'], cpu, [{module, eshaman_cpu}]}
+     , {['_'], disk, [{module, eshaman_disk}]}
+     , {['_'], memory, [{module, eshaman_mem}]}
+     ]}
+   ]}
+ ]}.

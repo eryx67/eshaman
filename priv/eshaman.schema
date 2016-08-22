@@ -1,0 +1,730 @@
+%% -*-  coding: utf-8; mode: erlang; erlang-indent-level: 4; indent-tabs-mode: nil -*-
+%% @doc Eshaman config
+
+%% @doc all worker nodes send there reports to one of available masters
+{mapping, "eshaman.distribution.is_master", "eshaman.distribution.is_master",
+ [{datatype, flag},
+  {default, true}
+ ]
+}.
+
+%% @doc List of worker nodes, master establishes connections to
+{mapping, "eshaman.distribution.nodes", "eshaman.distribution.nodes",
+ [{datatype, string},
+  {default, ""}
+ ]
+}.
+
+%%% SMS
+%% @doc Is SMS notification enabled
+{mapping, "eshaman.notify.sms.enabled", "eshaman.sms.enabled",
+ [{datatype, flag},
+  {default, false}
+ ]
+}.
+
+%% @doc Module for sending SMS
+{mapping, "eshaman.notify.sms.module", "eshaman.sms.module",
+ [{datatype, {enum, [gsms, devino_sms]}},
+  {default, gsms}
+ ]
+}.
+
+%% @doc Modem device
+{mapping, "eshaman.notify.sms.device", "gsms.interfaces.device",
+ [{datatype, string},
+  {default, "/dev/ttyUSB0"}
+ ]
+}.
+
+{mapping, "eshaman.notify.sms.reopen_timeout", "gsms.interfaces.reopen_timeout",
+ [{datatype, integer},
+  {default, 5000},
+  hidden
+ ]
+}.
+
+{mapping, "eshaman.notify.sms.reopen_timeout", "gsms.interfaces.reply_timeout",
+ [{datatype, integer},
+  {default, 10000},
+  hidden
+ ]
+}.
+
+{mapping, "eshaman.notify.sms.reopen_timeout", "gsms.interfaces.baud",
+ [{datatype, integer},
+  {default, 19200},
+  hidden
+ ]
+}.
+
+%%% XMPP
+{mapping, "eshaman.notify.xmpp.enabled", "eshaman.xmpp.enabled",
+ [{datatype, flag},
+  {default, false}
+ ]
+}.
+
+%% @doc XMPP relay for sending alarms
+{mapping, "eshaman.notify.xmpp.server", "eshaman.xmpp.host",
+ [{datatype, string},
+  {default, "localhost"}
+ ]
+}.
+
+{mapping, "eshaman.notify.xmpp.port", "eshaman.xmpp.port",
+ [{datatype, integer},
+  {default, 5222}
+ ]
+}.
+
+{mapping, "eshaman.notify.xmpp.domain", "eshaman.xmpp.domain",
+ [{datatype, string},
+  {default, "localhost"}
+ ]
+}.
+
+%% @doc XMPP user
+{mapping, "eshaman.notify.xmpp.username", "eshaman.xmpp.username",
+ [{datatype, string},
+  {default, "JabberUser"}]
+}.
+
+%% @doc XMPP password
+{mapping, "eshaman.notify.xmpp.password", "eshaman.xmpp.password",
+ [{datatype, string},
+  {default, "JabberPassword"}
+ ]
+}.
+
+%%% SMTP
+{mapping, "eshaman.notify.smtp.enabled", "eshaman.smtp.enabled",
+ [{datatype, flag},
+  {default, false}
+ ]
+}.
+
+%% @doc SMTP relay for sending alarms
+{mapping, "eshaman.notify.smtp.relay", "eshaman.smtp.relay",
+ [{datatype, string},
+  {default, "localhost"}
+ ]
+}.
+
+%% @doc SMTP relay user
+{mapping, "eshaman.notify.smtp.username", "eshaman.smtp.username",
+ [{datatype, string},
+  {commented, "SmtpUser"}
+ ]
+}.
+
+%% @doc SMTP relay password
+{mapping, "eshaman.notify.smtp.password", "eshaman.smtp.password",
+ [{datatype, string},
+  {commented, "SmtpPassword"}
+ ]
+}.
+
+%% @doc SMTP from address
+{mapping, "eshaman.notify.smtp.from_address", "eshaman.smtp.from_address",
+ [{datatype, string},
+  {default, "shaman@localhost"}
+ ]
+}.
+
+%%% Elastic Search
+%% @doc ElasticSearch `host:port`
+{mapping, "eshaman.export.elastic.host", "eshaman.elastic.host",
+ [{datatype, ip},
+  {default, {"127.0.0.1", 9200}}
+  ]
+}.
+
+%% @doc ElasticSearch log format
+{mapping, "eshaman.export.elastic.index_format", "eshaman.elastic.index_format",
+ [{datatype, string},
+  {default, "shaman-%Y.%m.%d"}
+ ]
+}.
+
+%% @doc Is ElasticSearch reporting enabled
+{mapping, "eshaman.export.elastic.enabled", "eshaman.elastic.enabled",
+ [{datatype, flag},
+  {default, false}
+ ]
+}.
+
+%%% Meters
+%% Net Ping
+%% @doc Host to ping
+{mapping, "eshaman.entry.$domain.$group.$name.ping.host", "eshaman.entries",
+ [{datatype, string},
+  {default, "localhost"}
+ ]
+}.
+
+%% @doc Ping interval in sec
+{mapping, "eshaman.entry.$domain.$group.$name.ping.interval", "eshaman.entries",
+ [{datatype, integer},
+  {default, 5}
+ ]
+}.
+%% @doc Mesuarement interval in sec
+{mapping, "eshaman.entry.$domain.$group.$name.ping.span", "eshaman.entries",
+ [{datatype, integer},
+  {default, 60}
+ ]
+}.
+%% @doc Which metrics to publish
+{mapping, "eshaman.entry.$domain.$group.$name.ping.points", "eshaman.entries",
+ [{datatype, string},
+  {default, "mean"},
+  {validators, ["ping_points"]}
+ ]
+}.
+
+%% @doc Publish interval in sec
+{mapping, "eshaman.entry.$domain.$group.$name.ping.publish_interval", "eshaman.entries",
+ [{datatype, integer},
+  {default, 5}
+ ]
+}.
+
+%% @doc Publish or not
+{mapping, "eshaman.entry.$domain.$group.$name.ping.publish", "eshaman.entries",
+ [{datatype, flag},
+  {default, true}
+ ]
+}.
+
+%% @doc Publish by name of data point or provided name
+{mapping, "eshaman.entry.$domain.$group.$name.ping.publish_name", "eshaman.entries",
+ [{datatype, atom},
+  {default, undefined},
+  hidden]
+}.
+
+%% HTTP Ping
+%% @doc HTTP ping to URL
+{mapping, "eshaman.entry.$domain.$group.$name.http_ping.url", "eshaman.entries",
+ [{datatype, string},
+  {default, "http://localhost"},
+  {validators, ["url"]}
+ ]
+}.
+
+{mapping, "eshaman.entry.$domain.$group.$name.http_ping.method", "eshaman.entries",
+ [{datatype, {enum, [get, put, head]}},
+  {default, get}
+]
+}.
+
+{mapping, "eshaman.entry.$domain.$group.$name.http_ping.interval", "eshaman.entries",
+ [{datatype, integer},
+  {default, 5}
+ ]
+}.
+
+{mapping, "eshaman.entry.$domain.$group.$name.http_ping.span", "eshaman.entries",
+ [{datatype, integer},
+  {default, 60}
+ ]
+}.
+
+{mapping, "eshaman.entry.$domain.$group.$name.http_ping.points", "eshaman.entries",
+ [{datatype, string},
+  {default, "mean"},
+  {validators, ["ping_points"]}
+ ]
+}.
+
+%% @doc Publish interval in sec
+{mapping, "eshaman.entry.$domain.$group.$name.http_ping.publish_interval", "eshaman.entries",
+ [{datatype, integer},
+  {default, 5}
+ ]
+}.
+
+%% @doc Publish or not
+{mapping, "eshaman.entry.$domain.$group.$name.http_ping.publish", "eshaman.entries",
+ [{datatype, flag},
+  {default, true}
+ ]
+}.
+
+%% @doc Publish by name of data point or provided name
+{mapping, "eshaman.entry.$domain.$group.$name.http_ping.publish_name", "eshaman.entries",
+ [{datatype, atom},
+  {default, undefined},
+  hidden]
+}.
+
+%% CPU metric
+%% @doc CPU usage, cab be any of `nprocs,avg1,avg5,avg15,kernel,user,idle,wait`
+{mapping, "eshaman.entry.$domain.$group.$name.cpu.points", "eshaman.entries",
+ [{datatype, string},
+  {default, "nprocs,avg1,avg5,avg15,kernel,user,idle,wait"},
+  {validators, ["cpu_points"]}
+ ]
+}.
+
+%% @doc Publish interval in sec
+{mapping, "eshaman.entry.$domain.$group.$name.cpu.publish_interval", "eshaman.entries",
+ [{datatype, integer},
+  {default, 5}
+ ]
+}.
+
+%% @doc Publish or not
+{mapping, "eshaman.entry.$domain.$group.$name.cpu.publish", "eshaman.entries",
+ [{datatype, flag},
+  {default, true}
+ ]
+}.
+
+%% @doc Publish by name of data point or provided name
+{mapping, "eshaman.entry.$domain.$group.$name.cpu.publish_name", "eshaman.entries",
+ [{datatype, atom},
+  {default, undefined},
+  hidden]
+}.
+
+%% Disk metric
+%% @doc Disk usage
+{mapping, "eshaman.entry.$domain.$group.$name.disk.points", "eshaman.entries",
+ [{datatype, string},
+  {default, "/"}
+ ]
+}.
+%% @doc disk check interval in minutes
+{mapping, "eshaman.entry.$domain.$group.$name.disk.check_interval", "eshaman.entries",
+ [{datatype, integer},
+  {default, 30}
+ ]
+}.
+
+%% @doc Publish interval in sec
+{mapping, "eshaman.entry.$domain.$group.$name.disk.publish_interval", "eshaman.entries",
+ [{datatype, integer},
+  {default, 150}
+ ]
+}.
+
+%% @doc Publish or not
+{mapping, "eshaman.entry.$domain.$group.$name.disk.publish", "eshaman.entries",
+ [{datatype, flag},
+  {default, true}
+ ]
+}.
+
+%% @doc Publish by name of data point or provided name
+{mapping, "eshaman.entry.$domain.$group.$name.disk.publish_name", "eshaman.entries",
+ [{datatype, atom},
+  {default, file_system},
+  hidden]
+}.
+
+%% Memory metric
+%% @doc Memory usage, can be any of `total, used, capacity, mean, max, min`
+{mapping, "eshaman.entry.$domain.$group.$name.memory.points", "eshaman.entries",
+ [{datatype, string},
+  {default, "total,used,capacity,buffered,cached,mean,max,min"},
+  {validators, ["memory_points"]}
+ ]
+}.
+
+%% @doc Sampling interval in sec
+{mapping, "eshaman.entry.$domain.$group.$name.memory.interval", "eshaman.entries",
+ [{datatype, integer},
+  {default, 5}
+ ]
+}.
+%% @doc Mesuarement interval in sec
+{mapping, "eshaman.entry.$domain.$group.$name.memory.span", "eshaman.entries",
+ [{datatype, integer},
+  {default, 60}
+ ]
+}.
+
+%% @doc Publish interval in sec
+{mapping, "eshaman.entry.$domain.$group.$name.memory.publish_interval", "eshaman.entries",
+ [{datatype, integer},
+  {default, 5}
+ ]
+}.
+
+%% @doc Publish or not
+{mapping, "eshaman.entry.$domain.$group.$name.memory.publish", "eshaman.entries",
+ [{datatype, flag},
+  {default, true}
+ ]
+}.
+
+%% @doc Publish by name of data point or provided name
+{mapping, "eshaman.entry.$domain.$group.$name.memory.publish_name", "eshaman.entries",
+ [{datatype, atom},
+  {default, undefined},
+  hidden]
+}.
+
+%%% Alarms
+%% High alarm
+%% @doc This alarm is activated when `point` value greater than its level
+{mapping, "eshaman.alarm.$domain.$group.$name.$metric.$point.high.level", "eshaman.alarms",
+ [{datatype, string},
+  {default, "10000"},
+  {validators, ["validate_float"]}
+ ]
+}.
+
+%% @doc Actions to execute on alarm activation.
+%% Could be:
+%% - defun://<module>:<name>@
+%% - log://debug|info|notice|warning|error|critical|alert|emergency
+{mapping, "eshaman.alarm.$domain.$group.$name.$metric.$point.high.on", "eshaman.alarms",
+ [{datatype, string},
+  {default, "log://error"},
+  {validator, "alarm_actions"}
+ ]
+}.
+
+%% @doc Actions to execute on alarm deactivation
+{mapping, "eshaman.alarm.$domain.$group.$name.$metric.$point.high.off", "eshaman.alarms",
+ [{datatype, string},
+  {default, "log://info"},
+  {validator, "alarm_actions"}
+ ]
+}.
+
+%% @doc Action is activated next time only after this number of seconds
+{mapping, "eshaman.alarm.$domain.$group.$name.$metric.$point.high.ttl", "eshaman.alarms",
+ [{datatype, integer},
+  {default, 3600}
+ ]
+}.
+
+%% @doc Alarm is deactivated then its value change from its level to level*threshold
+{mapping, "eshaman.alarm.$domain.$group.$name.$metric.$point.high.threshold", "eshaman.alarms",
+ [{datatype, string},
+  {default, "0.05"},
+  {validators, ["validate_float"]}
+ ]
+}.
+%% Low alarm
+%% @doc This alarm is activated when `point` value less than its level
+{mapping, "eshaman.alarm.$domain.$group.$name.$metric.$point.low.level", "eshaman.alarms",
+ [{datatype, string},
+  {default, "0"},
+  {validators, ["validate_float"]}
+ ]
+}.
+
+%% @doc Actions to execute on alarm activation
+{mapping, "eshaman.alarm.$domain.$group.$name.$metric.$point.low.on", "eshaman.alarms",
+ [{datatype, string},
+  {default, "log://error"},
+  {validator, "alarm_actions"}
+ ]
+}.
+
+%% @doc Actions to execute on alarm deactivation
+{mapping, "eshaman.alarm.$domain.$group.$name.$metric.$point.low.off", "eshaman.alarms",
+ [{datatype, string},
+  {default, "log://info"},
+  {validator, "alarm_actions"}
+ ]
+}.
+
+%% @doc Action is activated next time only after this number of seconds
+{mapping, "eshaman.alarm.$domain.$group.$name.$metric.$point.low.ttl", "eshaman.alarms",
+ [{datatype, integer},
+  {default, 3600}
+ ]
+}.
+
+%% @doc Alarm is deactivated then its value change from its level to level*threshold
+{mapping, "eshaman.alarm.$domain.$group.$name.$metric.$point.low.threshold", "eshaman.alarms",
+ [{datatype, string},
+  {default, "0.05"},
+  {validators, ["validate_float"]}
+ ]
+}.
+
+%%%
+{validator, "validate_float", "validate float value",
+ fun (undefined) ->
+         true;
+     (V) ->
+         case string:to_float(V) of
+             {error, no_float} ->
+                 case string:to_integer(V) of
+                     {_, []} ->
+                         true;
+                     _ ->
+                         cuttlefish:invalid(iolist_to_binary(
+                                              io_lib:fwrite("should be a number ~w", [V])))
+                 end;
+             {_, []} ->
+                 true;
+             _ ->
+                 cuttlefish:invalid(iolist_to_binary(io_lib:fwrite("should be a number ~w", [V])))
+         end
+ end
+}.
+
+{validator, "alarm_actions", "validate alarm actions URLs",
+ fun (UrlsStr) when is_list(UrlsStr) ->
+         Opts = http_uri:scheme_defaults()
+             ++ [{mailto, 25},
+                 {defun, -1},
+                 {log, -1},
+                 {syslog, -1},
+                 {xmpp, 5222},
+                 {sms, -1}
+                ],
+         ValidateURI_F =
+             fun (Url) ->
+                     case http_uri:parse(Url, Opts) of
+                         {ok, _} ->
+                             true;
+                         _ ->
+                             false
+                     end
+             end,
+         lists:all(ValidateURI_F, [string:strip(V) || V <- string:tokens(UrlsStr, ",")]);
+     (_) ->
+         false
+ end
+}.
+
+{validator, "ping_points", "metric entries allowed for ping",
+ fun (undefined) ->
+         true;
+     (Str) ->
+         lists:all(fun (T) -> lists:member(T, [last, count, mean, median, min, max]) end,
+                   [list_to_atom(string:strip(V)) || V <- string:tokens(Str, ",")])
+ end
+}.
+
+{validator, "url", "validate HTTP URL",
+ fun (Url) when is_list(Url) ->
+         case http_uri:parse(Url) of
+             {ok, _} ->
+                 true;
+             _ ->
+                 false
+         end;
+     (_) ->
+         false
+ end
+}.
+
+{validator, "cpu_points", "metric entries allowed for CPU",
+ fun (undefined) ->
+         true;
+     (Str) ->
+         lists:all(fun (T) -> lists:member(T, [nprocs, avg1, avg5, avg15, kernel, user, idle, wait]) end,
+                   [list_to_atom(string:strip(V)) || V <- string:tokens(Str, ",")])
+ end
+}.
+
+{validator, "memory_points", "metric entries allowed for memory",
+ fun (undefined) ->
+         true;
+     (Str) ->
+         lists:all(fun (T) -> lists:member(T, [total, used, capacity, buffered, cached,
+                                               mean, median, min, max]) end,
+                   [list_to_atom(string:strip(V)) || V <- string:tokens(Str, ",")])
+ end
+}.
+
+{translation,
+ "eshaman.distribution",
+ fun (Conf) ->
+         Services =
+             lists:usort(
+               [list_to_atom(Svc) ||
+                   {[_, _, Svc|_], _} <- cuttlefish_variable:filter_by_prefix("eshaman.notify",
+                                                                              Conf)]
+               ++ [list_to_atom(Svc) ||
+                      {[_, _, Svc|_], _} <- cuttlefish_variable:filter_by_prefix("eshaman.export",
+                                                                                 Conf)]),
+         IsMaster = cuttlefish:conf_get("eshaman.distribution.is_master", Conf),
+         NodesStr = cuttlefish:conf_get("eshaman.distribution.nodes", Conf),
+         Nodes = lists:map(fun (N) -> list_to_atom(string:strip(N)) end,
+                           string:tokens(NodesStr, ",")),
+         [{services, Services}, {is_master,  IsMaster}, {nodes, Nodes}]
+ end
+}.
+
+{translation,
+ "eshaman.entries",
+ fun (Conf) ->
+         try
+             EntryPat = "eshaman.entry.$domain.$group.$name.$metric.$param",
+             EntryFilterF =
+                 fun({K, _V}) ->
+                         cuttlefish_variable:is_fuzzy_match(K,
+                                                            string:tokens(EntryPat, "."))
+                 end,
+             IsDefaultF = fun ({[Dom, Dom, Dom, _], {_P, _V}}) -> true;
+                              (_) -> false
+                          end,
+             AtomizeEntryKeysF =
+                 fun (Key, Vs) when is_list(Key) ->
+                         {[list_to_atom(K) || K <- Key], [{list_to_atom(K), V} || {K, V} <- Vs]}
+                 end,
+
+             Entries1 = lists:filter(EntryFilterF, Conf),
+
+             Entries2 = ordsets:from_list([{[Dom, Gr, Nm, Meter], {Param, V}}
+                                           || {[_, _, Dom, Gr, Nm, Meter, Param], V} <- Entries1]),
+             EntriesDeflts2 = ordsets:from_list([ED || ED <- Entries2, IsDefaultF(ED)]),
+             Entries3 = ordsets:subtract(Entries2, EntriesDeflts2),
+
+             Entries4 = lists:foldl(
+                          fun ({K, V}, Acc) -> orddict:append(K, V, Acc) end,
+                          orddict:from_list([{K, []} || K <- proplists:get_keys(Entries3)]),
+                          Entries3),
+             EntriesDeflts4 = lists:foldl(
+                                fun ({K, V}, Acc) -> orddict:append(K, V, Acc) end,
+                                orddict:from_list([{K, []}
+                                                   || K <- proplists:get_keys(EntriesDeflts2)]),
+                                EntriesDeflts2),
+
+             Entries5 = orddict:map(
+                          fun (K=[Dom, _, _, M], Vs) ->
+                                  Vs1 = orddict:from_list(Vs),
+                                  VsDef = case orddict:find([Dom, Dom, Dom, M], EntriesDeflts4) of
+                                              {ok, DVs} -> orddict:from_list(DVs);
+                                              error -> []
+                                          end,
+                                  orddict:merge(fun (_, V1, _) -> V1 end, Vs1, VsDef)
+                          end, Entries4),
+             Entries6 =
+                 orddict:map(fun (K, Props) ->
+                                     PointsStr = orddict:fetch("points", Props),
+                                     Points = [list_to_atom(string:strip(V))
+                                               || V <- string:tokens(PointsStr, ",")],
+                                     orddict:store("points", Points, Props)
+                             end, Entries5),
+             Entries7 = [AtomizeEntryKeysF(K, orddict:to_list(Vs))
+                         || {K, Vs} <- orddict:to_list(Entries6)],
+             Entries7
+         catch
+             T:E -> cuttlefish:invalid(io_lib:format("~p ~p", [E, erlang:get_stacktrace()])),
+                    throw({error, E})
+         end
+ end
+}.
+
+{translation,
+ "gsms.interfaces",
+ fun (Conf) ->
+         Enabled = cuttlefish:conf_get("eshaman.notify.sms.enabled", Conf),
+         Module = cuttlefish:conf_get("eshaman.notify.sms.module", Conf),
+         GsmsEnabled = (Module == gsms) andalso Enabled,
+
+         case GsmsEnabled of
+             true ->
+                 Params = cuttlefish_variable:filter_by_prefix("eshaman.notify.sms",
+                                                               Conf),
+                 KVs = [{list_to_atom(K), V} ||
+                           {[_, _, _, K], V} <- Params, not lists:member(K, ["module"])],
+                 [{gsms_0705, 1, KVs}];
+             false ->
+                 []
+         end
+ end
+}.
+
+{translation,
+ "eshaman.alarms",
+ fun (Conf) ->
+         StringToNumberF =
+             fun (V) ->
+                     case string:to_float(V) of
+                         {error, no_float} ->
+                             case string:to_integer(V) of
+                                 {Int, []} ->
+                                     Int;
+                                 _ ->
+                                     cuttlefish:invalid("should be a number")
+                             end;
+                         {Float, []} ->
+                             Float;
+                         _ ->
+                             cuttlefish:invalid("should be a number")
+                     end
+             end,
+         try
+             AlarmPat = "eshaman.alarm.$domain.$group.$name.$metric.$point.$guard.$param",
+             AlarmFilterF =
+                 fun({K, _V}) ->
+                         cuttlefish_variable:is_fuzzy_match(K,
+                                                            string:tokens(AlarmPat, "."))
+                 end,
+             IsDefaultF = fun ({[Dom, Dom, Dom, Dom, Dom, _], {_P, _V}}) -> true;
+                              (_) -> false
+                          end,
+             AtomizeAlarmKeysF =
+                 fun (Key, Vs) when is_list(Key) ->
+                         {[case list_to_atom(K) of
+                               '*' -> '_';
+                               AK -> AK
+                           end || K <- Key],
+                          [{list_to_atom(K), V} || {K, V} <- Vs]}
+                 end,
+
+             Alarms1 = lists:filter(AlarmFilterF, Conf),
+
+             Alarms2 =
+                 ordsets:from_list(
+                   [{[Dom, Gr, Nm, Meter, Point, Guard], {Param, V}}
+                    || {[_, _, Dom, Gr, Nm, Meter, Point, Guard, Param], V} <- Alarms1]),
+
+             AlarmsDeflts2 = ordsets:from_list([AD || AD <- Alarms2, IsDefaultF(AD)]),
+             Alarms3 = ordsets:subtract(Alarms2, AlarmsDeflts2),
+             Alarms4 = lists:foldl(
+                          fun ({K, V}, Acc) -> orddict:append(K, V, Acc) end,
+                          orddict:from_list([{K, []} || K <- proplists:get_keys(Alarms3)]),
+                          Alarms3),
+             AlarmsDeflts4 = lists:foldl(
+                                fun ({K, V}, Acc) -> orddict:append(K, V, Acc) end,
+                                orddict:from_list([{K, []}
+                                                   || K <- proplists:get_keys(AlarmsDeflts2)]),
+                                AlarmsDeflts2),
+             %% merge defaults
+             Alarms5 =
+                 orddict:map(
+                   fun (K=[Dom, _G, _N, _M, _P, G], Vs) ->
+                           Vs1 = orddict:from_list(Vs),
+                           VsDef = case orddict:find([Dom, Dom, Dom, Dom, Dom, G], AlarmsDeflts4) of
+                                       {ok, DVs} -> orddict:from_list(DVs);
+                                       error -> []
+                                   end,
+                           orddict:merge(fun (_, V1, _) -> V1 end, Vs1, VsDef)
+                   end, Alarms4),
+             Alarms6 =
+                 orddict:map(
+                   fun (K, Props) ->
+                           orddict:map(
+                             fun ("actions", ActionsStr) ->
+                                     [string:strip(V) || V <- string:tokens(ActionsStr, ",")];
+                                 ("level", V) ->
+                                     StringToNumberF(V);
+                                 ("threshold", V) ->
+                                     StringToNumberF(V);
+                                 (_, V) ->
+                                     V
+                             end, Props)
+                   end, Alarms5),
+             Alarms7 = [AtomizeAlarmKeysF(K, orddict:to_list(Vs))
+                         || {K, Vs} <- orddict:to_list(Alarms6)],
+             Alarms7
+         catch
+             T:E -> cuttlefish:invalid(io_lib:format("~p ~p", [E, erlang:get_stacktrace()])),
+                    throw({error, E})
+         end
+ end
+}.

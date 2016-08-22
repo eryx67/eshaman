@@ -1,0 +1,290 @@
+@author Vladimir G. Sekissov <eryx67@gmail.com>
+@copyright (C) 2014, Vladimir G. Sekissov
+@title Shaman
+@doc
+
+The application is designed for:
+
+- Monitoring parameters (metrics) of applications and servers
+- Reaction to monitored parameters change.
+
+xref:metrics[*Metrics*]
+
+xref:datapoint-alarms[*Alarms*]
+
+xref:distribution[*Distribution* *and* *Fault Tolerance*]
+
+xref:data-exp[*Data* *publishing*]
+
+xref:config[*Configuration*]
+
+[[metrics]]
+== Metrics
+
+Each metric consists from several measuring points available for monitoring.
+
+disk:: measuring points are the names of the mount points,
+       value - the percentage of the file system occupancy
+
+memory :: RAM, measurement points are
+total ::: total memory in megabytes
+used ::: memory used in MB
+capacity ::: percentage of memory usage
+buffered ::: memory occupied by the I/O buffers
+cached ::: memory occupied by caching files
+mean ::: arithmetic mean of memory usage
+median ::: median of memory usage
+min ::: minimum value of memory usage
+max ::: maximum value of memory usage
+
+cpu:: CPU utilization, measuring point:
+nprocs ::: number of processes in the system
+avg1 ::: average CPU load over the last minute
+avg5 ::: average CPU load over the last 5 minutes
+avg15 ::: average CPU load over the last 15 minutes
+kernel ::: percentage of utilization by the core tasks
+user ::: percent CPU utilization by the user tasks
+idle ::: CPU idle percentage
+wait ::: percent of I/O waiting
+
+[[ping-metric]]
+ping ::
+ICMP response time in milliseconds within the interval for a period.
+In case of response absence during the period _-1_ is returned as a result.
+The default values ​​for the interval and period -
+_5_ and _60_ seconds, respectively. Measurement points:
+count ::: total number of requests made
+last ::: last measured value
+mean ::: arithmetic average for the period
+median ::: median value for the period
+min ::: minimum value for the period
+max ::: maximum value for the period
+
+http_ping :: execution of an HTTP request, like xref:ping-metric[ping], but the HTTP response code,
+other than 200,301,302,307,308 is interpreted as a failure (_-1_ returned as a value)
+
+[[datapoint-alarms]]
+== Alarms
+
+Alarm provides a response to the appearance and the disappearance of an alarm event.
+Frequency of the responses to the continuing event is a configurable parameter.
+
+Alarm event is an exit of parameter value over limits.
+
+Provided responses to emergency events are:
+
+log :: Event logging
+mailto :: e-mail notification
+xmpp :: Jabber notification
+sms:: notification via SMS
+
+[[distribution]]
+== Distribution and fault tolerance
+
+The application can operate in a distributed manner.
+Nodes are divided into workers and the master node.
+
+All nodes collect data (measuring points) and track events
+alarm.
+
+Publication of data and alarms reactions are produced only by master nodes.
+Worker nodes exchange information with the first available master node.
+
+The connections between the worker nodes and master nodes only occur by
+the initiative of the latters, therefore, the master nodes may be in the
+demilitarized zone and have no external IP-addresses.
+
+[[data-exp]]
+== Data Publishing
+
+An application can export data to the following systems:
+
+- ElasticSearch
+- statsd
+- collectd
+- Graphite
+- SNMP
+
+[[config]]
+== Configuration
+
+. ElasticSearch index creation
+[source,shell]
+--------------------------------------------------
+./bin/create-elastic-index.sh
+--------------------------------------------------
+
+. Measurement points naming
+
+[source,shell]
+--------------------------------------------------
+$domain.$group.$name.$metric
+--------------------------------------------------
+
+$domain,$group,$name::
+are used for logical grouping
+$metric:: metric name, _ping|http_ping|disk|memory|cpu_
+
+[[config-datapoint]]
+=== Measurement points configuration
+
+[source,shell]
+--------------------------------------------------
+# Measurement points available for export and signaling
+eshaman.entry.$domain.$group.$name.$metric.points = "name1,name2,name3"
+
+# Publication interval in seconds
+eshaman.entry.$domain.$group.$name.$metric.publish_interval = 5
+
+# Disable/enable publishing
+eshaman.entry.$domain.$group.$name.$metric.publish = on|off
+--------------------------------------------------
+
+.Additional parameters for _ping,http_ping_
+
+[source,shell]
+--------------------------------------------------
+# Host poll interval
+eshaman.entry.$domain.$group.$name.ping|http_ping.interval = 5
+# Averaging period
+eshaman.entry.$domain.$group.$name.ping|http_ping.span = 60
+--------------------------------------------------
+
+.Additional parameters for _disk_
+
+[source,shell]
+--------------------------------------------------
+# Check period in minutes
+eshaman.entry.$domain.$group.$name.disk.check_interval = 30
+--------------------------------------------------
+
+.Additional parameters for _memory_
+
+[source,shell]
+--------------------------------------------------
+
+# check interval in seconds
+eshaman.entry.$domain.$group.$name.memory.interval = 5
+# Averaging period
+eshaman.entry.$domain.$group.$name.memory.span = 60
+--------------------------------------------------
+
+=== Alarms configuration
+
+. Measurement points naming
+
+[source,shell]
+--------------------------------------------------
+$domain.$group.$name.$metric.$point
+--------------------------------------------------
+
+$domain,$group,$name::
+the same as for xref:config-datapoint[конфигурации точек измерения]
+
+$point:: the same as for
+_eshaman.entry.$domain.$group.$name.$metric.points_.
+
+Every part of the name could be substituted by _*_
+
+.Alarm reactions
+
+mailto://user@maximail.org::
+send by e-mail
+xmpp://user::
+send by Jabber
+sms://<phone-number>::
+send by SMS
+log://debug|info|notice|warning|error|critical|alert|emergency::
+write to logfile
+
+[source,shell]
+--------------------------------------------------
+# Set an upper threshold alarm
+eshaman.alarm.$domain.$group.$name.$metric.$point.high.level = 1000
+
+# Response to the transition over an upper level
+eshaman.alarm.$domain.$group.$name.$metric.$point.high.on = "malto://u1@c.co,xmpp://alex"
+# Response to the return into the boundary
+eshaman.alarm.$domain.$group.$name.$metric.$point.high.off = "mailto://u1@c.co,log://info"
+# Reaction frequency
+eshaman.alarm.$domain.$group.$name.$metric.$point.high.ttl = 3600
+# "Bounce" protection, 5%
+eshaman.alarm.$domain.$group.$name.$metric.$point.high.threshold = 0.05
+
+# Lower alarm threshold, the same logic
+eshaman.alarm.$domain.$group.$name.$metric.$point.low.level = -1
+eshaman.alarm.$domain.$group.$name.$metric.$point.low.on = "malto://u1@c.co,mailto://u2@c.co"
+eshaman.alarm.$domain.$group.$name.$metric.$point.low.off = "log://info,xmpp://u2"
+eshaman.alarm.$domain.$group.$name.$metric.$point.low.ttl = 3600
+eshaman.alarm.$domain.$group.$name.$metric.$point.low.threshold = 0.05
+--------------------------------------------------
+
+=== ElasticSearch export
+
+ES fields correspondence to the measurement point for the disk metrics:
+
+[source,shell]
+--------------------------------------------------
+_type        = $metric
+domain       = $domain
+group        = $group
+name         = $name
+file_system  = $point
+value        = значение
+--------------------------------------------------
+
+For other metrics:
+
+[source,shell]
+--------------------------------------------------
+_type  = $metric
+domain = $domain
+group  = $group
+name   = $name
+$point = значение
+--------------------------------------------------
+
+=== Node configuration
+
+[source,shell]
+--------------------------------------------------
+# master or worker
+eshaman.distribution.is_master = on|off
+# the list of workers, for masters only
+eshaman.distribution.nodes = "w1@91.218.212.48,w2@47.211.134.25"
+# node name name@ip.ad.dr.ess
+nodename = eshaman@127.0.0.1
+#  cookie must be the same on all of the nodes
+distributed_cookie = ASZCFGFG34
+
+# must be enabled on master node if is enabled on worker node
+eshaman.export.elastic.enabled = on|off
+--------------------------------------------------
+
+=== SMS configuration
+
+Application support SMS notification via:
+
+- GSM modem
+- HTTP service http://devinotele.com
+- HTTP service http://http://www.prostor-sms.ru
+
+[source,shell]
+--------------------------------------------------
+##   - one of: gsms, devino_sms, prostor_sms
+eshaman.notify.sms.module = gsms
+--------------------------------------------------
+
+[source,shell]
+--------------------------------------------------
+devino_sms.login =
+devino_sms.password =
+devino_sms.address =
+--------------------------------------------------
+
+[source,shell]
+--------------------------------------------------
+prostor_sms.login =
+prostor_sms.password =
+prostor_sms.address =
+--------------------------------------------------
